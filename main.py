@@ -1,7 +1,9 @@
 from scapy.all import sniff, RadioTap
 import getopt, sys
 import argparse
-# from probe_request import ProbeRequest
+from probe_request import ProbeRequest
+import json
+import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--target', help='targeted mac address to track')
@@ -10,7 +12,7 @@ args = parser.parse_args()
 
 
 def pkt_callback(pkt):
-    # # print(type(pkt))
+    # print(pkt[0].show())
     # radiotap = pkt.getlayer(RadioTap)
     # rssi = radiotap.dBm_AntSignal
     # print(rssi)
@@ -23,11 +25,13 @@ def pkt_callback(pkt):
         # pkt_record.src = pkt.addr2
         # pkt_record.rssi = pkt.getlayer(RadioTap).dBm_AntSignal
         # print(pkt_record)
-        print(pkt.addr2)
-        print("\n")
-        radiotap = pkt.getlayer(RadioTap)
-        rssi = radiotap.dBm_AntSignal
-        print(rssi)
+        probe_request = ProbeRequest(pkt.addr2, pkt.addr1, pkt.addr3, pkt.getlayer(RadioTap).dBm_AntSignal, time.time())
+        print(probe_request)
+        print(json.dumps(probe_request.__dict__))
+        # print("\n")
+        # radiotap = pkt.getlayer(RadioTap)
+        # rssi = radiotap.dBm_AntSignal
+        # print(rssi)
         # print("\n")
 
 
