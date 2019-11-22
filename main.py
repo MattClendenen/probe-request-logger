@@ -11,7 +11,10 @@ parser.add_argument('-t', '--target', help='targeted mac address to track')
 parser.add_argument('-i', '--iface', help='wireless interface to listen with')
 args = parser.parse_args()
 
+
 #TODO do some exception catching
+if (args.iface is None):
+    sys.exit('ERROR: You must provide an interface!')
 
 def pkt_callback(pkt):
     # management frames
