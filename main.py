@@ -4,6 +4,8 @@ import argparse
 from probe_request import ProbeRequest
 import json
 import time
+import logging
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--target', help='targeted mac address to track')
@@ -26,7 +28,8 @@ def pkt_callback(pkt):
         # pkt_record.rssi = pkt.getlayer(RadioTap).dBm_AntSignal
         # print(pkt_record)
         probe_request = ProbeRequest(pkt.addr2, pkt.addr1, pkt.addr3, pkt.getlayer(RadioTap).dBm_AntSignal, time.time())
-        print(probe_request)
+        logging.info(json.dumps(probe_request.__dict__))
+        # print(probe_request)
         print(json.dumps(probe_request.__dict__))
         # print("\n")
         # radiotap = pkt.getlayer(RadioTap)
@@ -36,7 +39,17 @@ def pkt_callback(pkt):
 
 
 def main():
+
+    print("start the show")
+    batch_path = 'log/' + str(time.time())
+    os.mkdir(batch_path)
+    curr_logfile_name = str(time.time()) + '.json'
+    curr_logfile_path = batch_path + '/' + curr_logfile_name
+    logging.basicConfig(format='%(message)s', filename=curr_logfile_path, level=logging.DEBUG)
+    logging.info("start the show")
     sniff(iface=args.iface, prn=pkt_callback)
-    
-if __name__ == '__main__':
+    print("hello moto")
+
+if __name__ == "__main__":
+
     main()
